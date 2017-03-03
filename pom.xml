@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (C) 2016 Marvin Herman Froeder (marvin@marvinformatics.com)
+    Copyright (C) 2017 Marvin Herman Froeder (velobr@gmail.com)
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -20,13 +20,16 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.marvinformatics</groupId>
-  <artifactId>${name}</artifactId>
+  <artifactId>manifest-validator-maven-plugin</artifactId>
   <version>0.1-SNAPSHOT</version>
+
+  <name>manifest-validator-maven-plugin</name>
+  <description>Checks MANIFEST.MF of a given jar</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <coveralls.token></coveralls.token>
+    <coveralls.token>wXfyWS0lrtVacKQNDknZgEfLOLhz0mGnn</coveralls.token>
     <java.version>1.8</java.version>
   </properties>
 
@@ -124,7 +127,7 @@
       <plugin>
         <groupId>com.marvinformatics.formatter</groupId>
         <artifactId>formatter-maven-plugin</artifactId>
-        <version>1.6.0</version>
+        <version>1.9.1.RC2</version>
         <inherited>false</inherited>
         <configuration>
           <sourceDirectory>${project.basedir}</sourceDirectory>
@@ -183,7 +186,7 @@
           <header>LICENSE.txt</header>
           <properties>
             <owner>Marvin Herman Froeder</owner>
-            <email>marvin@marvinformatics.com</email>
+            <email>velobr@gmail.com</email>
           </properties>
           <excludes>
             <exclude>**/README</exclude>
@@ -224,9 +227,9 @@
     </plugins>
   </build>
 
-  <url>https://github.com/${owner}/${name}/</url>
+  <url>https://github.com/velo/manifest-validator-maven-plugin/</url>
 
-  <inceptionYear>${year}</inceptionYear>
+  <inceptionYear>2017</inceptionYear>
 
   <licenses>
     <license>
@@ -246,9 +249,9 @@
   </developers>
 
   <scm>
-    <connection>scm:git:git@github.com:${owner}/${name}.git</connection>
-    <developerConnection>scm:git:git@github.com:${owner}/${name}.git</developerConnection>
-    <url>https://github.com/${owner}/${name}/</url>
+    <connection>scm:git:git@github.com:velo/manifest-validator-maven-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:velo/manifest-validator-maven-plugin.git</developerConnection>
+    <url>https://github.com/velo/manifest-validator-maven-plugin/</url>
   </scm>
 
   <distributionManagement>
