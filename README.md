@@ -7,17 +7,33 @@
 [![Forks](https://img.shields.io/github/forks/velo/manifest-validator-maven-plugin.svg)](https://github.com/velo/manifest-validator-maven-plugin/network) 
 [![Stars](https://img.shields.io/github/stars/velo/manifest-validator-maven-plugin.svg)](https://github.com/velo/manifest-validator-maven-plugin/stargazers)
 
-maven.boilerplate contains a set of configuration files for CI(travis, appveyor), coverage(coveralls+jacoco), code format(eclipse+maven), licensing, other maven plugins and all other things I think I will need accross multiple projects
+Checks MANIFEST.MF of a given jar
 
 # Why?
-![image](https://cloud.githubusercontent.com/assets/136590/14231013/3752c72a-f9c6-11e5-9372-af23df11d18d.png)
+
+Nordays executable jars became the new black.
+
+Still, https://github.com/apache/maven-plugins/tree/trunk/maven-jar-plugin[maven-jar-plugin] provides no validation for the MANIFEST.MF.
 
 
-I wanna all my projects share what I think makes life easier without having to remember copy and pasting all.
+# How?
 
-This way, a script can remember to copy and paste for me.
-
-As a preparation step, it's really wise to run
 ````
-$ mvn com.github.ekryd.sortpom:sortpom-maven-plugin:2.4.0:sort -Dsort.keepBlankLines=true "-Dsort.lineSeparator=\n" -Dsort.predefinedSortOrder=custom_1 -Dsort.createBackupFile=false
+           <plugin>
+                <groupId>com.marvinformatics</groupId>
+                <artifactId>manifest-validator-maven-plugin</artifactId>
+                <configuration>
+                    <entries>
+                        <entry>Main-Class:PRESENT,VALID_CLASS</entry>
+                    </entries>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>manifest-validator</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 ````
