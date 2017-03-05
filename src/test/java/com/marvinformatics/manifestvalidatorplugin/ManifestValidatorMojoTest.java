@@ -88,6 +88,15 @@ public class ManifestValidatorMojoTest {
     }
 
     @Test
+    public void caseSensitive() throws Exception {
+        thrown.expect(MojoFailureException.class);
+        thrown.expectMessage(containsString("Java class 'test.Main' not found"));
+
+        project.addAttachedArtifact(manifestedJar(new File(basedir, "case.zip")));
+        maven.executeMojo(session, project, "manifest-validator");
+    }
+
+    @Test
     public void success() throws Exception {
         project.addAttachedArtifact(manifestedJar(new File(basedir, "ok.zip")));
         maven.executeMojo(session, project, "manifest-validator");
