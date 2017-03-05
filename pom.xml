@@ -21,7 +21,7 @@
 
   <groupId>com.marvinformatics</groupId>
   <artifactId>manifest-validator-maven-plugin</artifactId>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.1</version>
   <packaging>maven-plugin</packaging>
 
   <name>manifest-validator-maven-plugin</name>
