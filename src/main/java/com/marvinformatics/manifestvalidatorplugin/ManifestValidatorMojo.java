@@ -18,11 +18,10 @@ package com.marvinformatics.manifestvalidatorplugin;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -36,7 +35,7 @@ import com.google.common.base.Strings;
 import com.marvinformatics.manifestvalidatorplugin.oo.Entry;
 import com.marvinformatics.manifestvalidatorplugin.oo.Result;
 
-@Mojo(name = "manifest-validator", defaultPhase = LifecyclePhase.VERIFY)
+@Mojo(name = "manifest-validator", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
 public class ManifestValidatorMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project}")
@@ -50,11 +49,20 @@ public class ManifestValidatorMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        final Stream<Artifact> artifacts = project.getAttachedArtifacts().stream()
+        final List<Artifact> artifacts = project.getAttachedArtifacts().stream()
+                .peek(artifact -> getLog().debug("Attached artifact: " + artifact))
                 .filter(artifact -> "jar".equals(artifact.getType()))
-                .filter(artifact -> included(artifact.getArtifactId()));
+                .filter(artifact -> included(artifact.getArtifactId()))
+                .collect(Collectors.toList());
 
-        final String message = artifacts
+        if (artifacts.isEmpty()) {
+            getLog().error("No artifacts attached for " + project);
+            throw new MojoFailureException("No artifacts attached for " + project);
+        }
+
+        getLog().info("Validating " + artifacts.size() + " artifact(s)");
+
+        final String message = artifacts.stream()
                 .map(artifact -> evaluate(artifact))
                 .filter(result -> result.hasWarnings())
                 .map(result -> result.message())
@@ -66,6 +74,7 @@ public class ManifestValidatorMojo extends AbstractMojo {
     }
 
     private Result evaluate(Artifact artifact) {
+        getLog().info("Validating: " + artifact);
         final File file = artifact.getFile();
 
         if (!file.exists())
