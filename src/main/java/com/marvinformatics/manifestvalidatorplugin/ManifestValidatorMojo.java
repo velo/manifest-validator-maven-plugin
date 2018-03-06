@@ -32,6 +32,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.marvinformatics.manifestvalidatorplugin.oo.Entry;
 import com.marvinformatics.manifestvalidatorplugin.oo.Result;
 
@@ -41,6 +42,12 @@ public class ManifestValidatorMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}")
     private MavenProject project;
 
+    @Parameter(defaultValue = "${project.attachedArtifacts}", required = true, readonly = true)
+    private List<Artifact> attachedArtifacts;
+
+    @Parameter(defaultValue = "false", alias = "mv.skip")
+    private boolean skip;
+
     @Parameter
     private String[] includes;
 
@@ -49,16 +56,27 @@ public class ManifestValidatorMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        final List<Artifact> artifacts = project.getAttachedArtifacts().stream()
-                .peek(artifact -> getLog().debug("Attached artifact: " + artifact))
-                .filter(artifact -> "jar".equals(artifact.getType()))
-                .filter(artifact -> included(artifact.getArtifactId()))
-                .collect(Collectors.toList());
+        if (skip) {
+            getLog().warn("Skipping manifest-validator");
+            return;
+        }
 
-        if (artifacts.isEmpty()) {
+        final List<Artifact> projectArtifacts = ImmutableList.<Artifact> builder()
+                .addAll(attachedArtifacts)
+                .add(project.getArtifact())
+                .build();
+
+        if (projectArtifacts.isEmpty()) {
             getLog().error("No artifacts attached for " + project);
             throw new MojoFailureException("No artifacts attached for " + project);
         }
+
+        final List<Artifact> artifacts = projectArtifacts.stream()
+                .peek(artifact -> getLog().debug("Filtering artifact: " + artifact))
+                .filter(artifact -> "jar".equals(artifact.getType()))
+                .filter(artifact -> artifact.getFile() != null)
+                .filter(artifact -> included(artifact.getArtifactId()))
+                .collect(Collectors.toList());
 
         getLog().info("Validating " + artifacts.size() + " artifact(s)");
 

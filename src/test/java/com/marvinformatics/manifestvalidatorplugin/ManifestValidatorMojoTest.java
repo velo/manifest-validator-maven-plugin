@@ -97,8 +97,14 @@ public class ManifestValidatorMojoTest {
     }
 
     @Test
-    public void success() throws Exception {
+    public void attachedArtifact() throws Exception {
         project.addAttachedArtifact(manifestedJar(new File(basedir, "ok.zip")));
+        maven.executeMojo(session, project, "manifest-validator");
+    }
+
+    @Test
+    public void projectArtifact() throws Exception {
+        project.setArtifact(manifestedJar(new File(basedir, "ok.zip")));
         maven.executeMojo(session, project, "manifest-validator");
     }
 
